@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.api.deps import get_current_active_user
@@ -16,6 +16,7 @@ def send_message(
     message_in: MessageCreate,
     current_user: User = Depends(get_current_active_user),
 ):
+    """메시지 전송"""
     message = crud_message.create_with_sender(
         db, obj_in=message_in, sender_id=current_user.id
     )
@@ -27,6 +28,7 @@ def get_conversation(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
+    """특정 사용자와의 대화 내역 조회"""
     messages = crud_message.get_conversation(
         db, user1_id=current_user.id, user2_id=user_id
     )

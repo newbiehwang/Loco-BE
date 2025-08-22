@@ -3,10 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.v1.api import api_router
 
+# FastAPI 앱 생성
 app = FastAPI(
-    title="Travel Platform API",
-    description="한국 여행 서비스 플랫폼 API",
-    version="1.0.0"
+    title=settings.PROJECT_NAME,
+    description=settings.DESCRIPTION,
+    version=settings.VERSION,
+    openapi_url="/api/v1/openapi.json"
 )
 
 # CORS 설정

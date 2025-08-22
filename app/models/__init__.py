@@ -1,12 +1,8 @@
-from app.core.database import Base
+# app/models/__init__.py
 from .user import User
-from .region import Region
 from .trip import Trip
-from .loco import Loco
+from .region import Region
 from .message import Message
+from .loco import Loco
 
-# User 모델에 관계 추가
-from sqlalchemy.orm import relationship
-
-User.trips = relationship("Trip", back_populates="user")
-User.loco_profile = relationship("Loco", back_populates="user", uselist=False)
+__all__ = ["User", "Trip", "Region", "Message", "Loco"]

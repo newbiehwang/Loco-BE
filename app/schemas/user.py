@@ -1,38 +1,40 @@
-from pydantic import BaseModel, EmailStr
 from typing import Optional
-from datetime import datetime
+from datetime import date, datetime
+from pydantic import BaseModel, EmailStr
 
 
-class UserBase(BaseModel):
+class UserCreate(BaseModel):
+    """회원가입용 스키마 - 프론트엔드 폼과 일치"""
     email: EmailStr
     username: str
-    is_active: bool = True
-    is_loco: bool = False
-    introduction: Optional[str] = None
-
-
-class UserCreate(UserBase):
     password: str
+    birth_date: Optional[date] = None
 
 
 class UserUpdate(BaseModel):
+    """사용자 정보 수정용 스키마"""
     username: Optional[str] = None
-    introduction: Optional[str] = None
-    profile_image: Optional[str] = None
+    birth_date: Optional[date] = None
 
 
-class UserInDBBase(UserBase):
+class UserResponse(BaseModel):
+    """사용자 정보 응답용 스키마"""
     id: int
+    email: str
+    username: str
+    birth_date: Optional[date] = None
+    is_active: bool
+    is_loco: bool
     created_at: datetime
-    updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
 
 
-class User(UserInDBBase):
-    pass
+# 별칭 설정
+User = UserResponse
 
 
-class UserInDB(UserInDBBase):
+class UserInDB(UserResponse):
+    """데이터베이스용 스키마 (비밀번호 포함)"""
     hashed_password: str
