@@ -1,30 +1,35 @@
-from typing import Optional
+# app/crud/user.py
 from sqlalchemy.orm import Session
-from app.crud.base import CRUDBase
-from app.models.user import User
+from app.models import User
 from app.schemas.user import UserCreate, UserUpdate
-from app.core.security import get_password_hash
+from typing import Optional
 
-class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
-    def get_by_email(self, db: Session, *, email: str) -> Optional[User]:
-        return db.query(User).filter(User.email == email).first()
+def get_by_email(db: Session, email: str) -> Optional[User]:
+    return db.query(User).filter(User.email == email).first()
 
-    def get_by_username(self, db: Session, *, username: str) -> Optional[User]:
-        return db.query(User).filter(User.username == username).first()
+def get_by_nickname(db: Session, nickname: str) -> Optional[User]:
+    return db.query(User).filter(User.nickname == nickname).first()
 
-    def create(self, db: Session, *, obj_in: UserCreate) -> User:
-        db_obj = User(
-            email=obj_in.email,
-            username=obj_in.username,
-            hashed_password=get_password_hash(obj_in.password),
-            birth_date=obj_in.birth_date,
-        )
-        db.add(db_obj)
-        db.commit()
-        db.refresh(db_obj)
-        return db_obj
+def create(db: Session, user_in: UserCreate, hashed_pw: str) -> User:
+    user = User(
+        email=user_in.email,
+        hashed_password=hashed_pw,
+        nickname=user_in.nickname,
+        intro=user_in.intro,
+        city_id=user_in.city_id,
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
 
-    def is_active(self, user: User) -> bool:
-        return user.is_active
-
-crud_user = CRUDUser(User)
+def update(db: Session, user: User, user_in: UserUpdate) -> User:
+    if user_in.nickname is not None:
+        user.nickname = user_in.nickname
+    if user_in.intro is not None:
+        user.intro = user_in.intro
+    if user_in.city_id is not None:
+        user.city_id = user_in.city_id
+    db.commit()
+    db.refresh(user)
+    return user
