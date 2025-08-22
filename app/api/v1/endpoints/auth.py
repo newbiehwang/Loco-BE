@@ -7,7 +7,7 @@ from passlib.context import CryptContext
 from app.core.database import get_db
 from app.schemas.user import UserCreate, UserOut
 from app.schemas.auth import Token
-from app.crud import user as crud_user
+from app.crud.user import crud_user
 from app.utils.jwt import create_access_token  # 아래에 예시 제공
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
